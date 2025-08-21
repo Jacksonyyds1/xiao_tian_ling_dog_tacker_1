@@ -254,27 +254,41 @@
 };
 
 &i2c1 {
-    npm1300_ek_pmic: pmic@6b {
+    status = "okay";
+    
+    pmic@6b {
         compatible = "nordic,npm1300";
         reg = <0x6b>;
-
-        npm1300_ek_gpio: gpio-controller {
-            compatible = "nordic,npm1300-gpio";
-            gpio-controller;
-            #gpio-cells = <2>;
-            ngpios = <5>;
-        };
-
-        npm1300_ek_regulators: regulators {
+        
+        regulators {
             compatible = "nordic,npm1300-regulator";
-
-            /* limits are set to min/max allowed values */
-            npm1300_ek_buck1: BUCK1 {
+            
+            BUCK1 {
+                // 不要使用 enable-gpios
+                // 查看 npm13xx-regulator-common.yaml 中支持的属性
                 regulator-min-microvolt = <1800000>;
-                regulator-max-microvolt = <1900000>;
-                regulator-init-microvolt = <1900000>;
-                /* set to 1.9V for boot, will be set to 1.8V by software.  Workaround for NPM1300 Errata #27 */
+                regulator-max-microvolt = <3300000>;
+                // 其他支持的属性...
             };
+            
+            BUCK2 {
+                // BUCK2 配置
+            };
+            
+            LDO1 {
+                // 移除 enable-gpios
+                // 使用新版本支持的属性
+                regulator-min-microvolt = <1800000>;
+                regulator-max-microvolt = <3300000>;
+                regulator-boot-on;  // 如果需要启动时开启
+            };
+            
+            LDO2 {
+                // LDO2 配置
+            };
+        };
+    };
+};
 /*
             npm1300_ek_buck2: BUCK2 {
                 regulator-min-microvolt = <1000000>;
